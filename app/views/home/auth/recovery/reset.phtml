@@ -1,0 +1,33 @@
+<div class="zone medium">
+    <h1 class="zone xl margin-bottom margin-top">
+        Password Reset
+    </h1>
+
+    <small class="pull-end">* All fields are required</small>
+
+    <br />
+    <br />
+
+    <form name="recovery-reset"
+          data-service="auth.recoveryReset"
+          data-scope="console"
+          data-event="submit"
+          data-success="alert,redirect"
+          data-success-param-alert="Password Reset Completed"
+          data-success-param-url="/auth/signin"
+          data-failure="alert"
+          data-failure-param-alert-text="Password Reset Failed"
+          data-failure-param-alert-classname="error">
+
+        <input type="hidden" name="userId" data-ls-bind="{{router.params.userId}}">
+        <input type="hidden" name="token" data-ls-bind="{{router.params.token}}">
+
+        <label>Password</label>
+        <input name="passwordA" type="password" autocomplete="off" placeholder="" required data-forms-password-meter pattern=".{6,}" title="Six or more characters">
+
+        <label>Password Again</label>
+        <input name="passwordB" type="password" autocomplete="off" placeholder="" required data-forms-password-meter pattern=".{6,}" title="Six or more characters">
+
+        <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> Apply</button>
+    </form>
+</div>

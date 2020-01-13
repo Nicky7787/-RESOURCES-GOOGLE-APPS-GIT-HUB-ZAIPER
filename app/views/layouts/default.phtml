@@ -1,0 +1,118 @@
+<?php
+
+use Utopia\Locale\Locale;
+
+$protocol   = $this->getParam('protocol', '');
+$domain     = $this->getParam('domain', '');
+$api        = $this->getParam('api', '');
+$project    = $this->getParam('project', 'console');
+$version    = $this->getParam('version', '0.0.0');
+$isDev      = $this->getParam('isDev', false);
+$litespeed  = $this->getParam('litespeed', true);
+$analytics  = $this->getParam('analytics', 'UA-26264668-9');
+$env        = $this->getParam('env', '');
+$canonical  = $this->getParam('canonical', '');
+
+?>
+<!DOCTYPE html><!--
+<?php echo Locale::getText('settings.inspire'); ?>
+
+--><html lang="<?php echo Locale::getText('settings.locale'); ?>" class="<?php echo $this->getParam('class', 'none'); ?>  <?php echo $env; ?>">
+<head>
+    <link rel="manifest" href="/manifest.json">
+    <title><?php echo $this->getParam('title', ''); ?></title>
+    <meta name="description" content="<?php echo $this->getParam('description', ''); ?>" />
+    <link rel="stylesheet" media="all" type="text/css" href="/dist/styles/default-<?php echo Locale::getText('settings.direction'); ?>.css?v=<?php echo $version; ?>" />
+    <link rel="icon" type="image/png" href="<?php echo $this->escape($this->getParam('icon', '')); ?>?v=1" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,300,400,500,600" rel="stylesheet">
+    <link rel="apple-touch-icon" href="/images/apple.png">
+    <link rel="preconnect" href="<?php echo $api; ?>" />
+    <?php if (!empty($canonical)): ?>
+        <link rel="canonical" href="<?php echo $canonical; ?>" />
+    <?php endif; ?>
+    <?php foreach ($this->getParam('prefetch', []) as $prefetch): ?>
+        <link rel="prefetch" href="<?php echo $this->escape($prefetch); ?>" />
+    <?php endforeach; ?>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="theme-color" content="#24f4d4">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<?php echo $this->getParam('title', ''); ?>" />
+    <meta property="og:description" content="<?php echo $this->getParam('description', ''); ?>" />
+    <?php if (!empty($canonical)): ?>
+        <meta property="og:url" content="<?php echo $canonical; ?>" />
+    <?php endif; ?>
+    <meta property="og:image"  content="<?php echo $protocol; ?>://<?php echo $domain; ?>/images/logo.png?v=1" />
+    <script>
+
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', '<?php echo $analytics; ?>', 'auto', {});
+
+        var APP_ENV = {
+            NAME: '<?php echo APP_NAME; ?>',
+            VERSION: '<?php echo $version; ?>',
+            PROTOCOL: '<?php echo $protocol; ?>',
+            DOMAIN: '<?php echo $domain; ?>',
+            HOME: '<?php echo $this->escape($this->getParam('home')); ?>',
+            API: '<?php echo $api; ?>/v1',
+            PROJECT: '<?php echo $project; ?>',
+            LOCALE: '<?php echo $this->escape(Locale::getText('settings.locale')); ?>',
+            PREFIX: '<?php echo $this->escape($this->getParam('prefix')); ?>',
+            ROLES: <?PHP echo json_encode($this->getParam('roles', [])); ?>,
+            PAGING_LIMIT: <?PHP echo APP_PAGING_LIMIT; ?>
+        };
+
+        <?php if ($litespeed): ?>
+        document.addEventListener("DOMContentLoaded", function() {
+            var head      = document.getElementsByTagName('head')[0];
+            var script    = document.createElement('script');
+
+            script.type   = 'text/javascript';
+            script.async  = true;
+            script.src    = '/dist/scripts/app-all.js?v=<?php echo $version; ?>';
+            script.onload = function() {
+                window.ls.run(window);
+            };
+
+            head.appendChild(script);
+        });
+        <?php endif; ?>
+    </script>
+    <?php echo $this->exec($this->getParam('head', [])); ?>
+</head>
+
+<body>
+    <?php echo $this->exec($this->getParam('header', [])); ?>
+
+    <main data-ls-router data-first-from-server="true" data-acl data-analytics-pageview>
+        <?php echo $this->exec($this->getParam('body', [])); ?>
+   </main>
+
+    <div class="loader"></div>
+
+    <div data-cookie-policy="We are using cookies to make this website easier to use."></div>
+
+    <section data-ls-ui-alerts="" class="alerts">
+        <ul data-ls-loop="alerts.list" data-ls-as="alert">
+            <li>
+                <div data-ls-attrs="class={{alert.class}} message">
+                    <i class="icon-cancel" data-ls-ui-alerts-delete data-message="{{alert.id}}"></i>
+                    <span data-ls-bind="{{alert.text}}"></span>
+
+                    <span data-ls-if="undefined !== {{alert.link}}" style="display: none;">
+                        <a data-ls-attrs="href={{alert.link}}" data-ls-ui-alerts-delete data-message="{{alert.id}}">Learn More</a>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <?php echo $this->exec($this->getParam('footer', [])); ?>
+
+    <!-- Version <?php echo $version; ?> -->
+</body>
+</html>

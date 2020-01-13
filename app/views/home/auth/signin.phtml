@@ -1,0 +1,37 @@
+<div class="zone medium">
+    <h1 class="zone xl margin-bottom-large margin-top">
+        Sign In
+    </h1>
+
+    <div class="text-danger margin-bottom-large" style="display: none;" data-ls-if="{{router.params.failure}} >= 1">Login failed. Please check your credentials.</div>
+
+    <p>Login using email and password</p>
+
+    <form name="login"
+        data-service="auth.login"
+        data-scope="console"
+        data-event="submit"
+        data-success="trigger,redirect"
+        data-success-param-trigger-events="login"
+        data-success-param-redirect-url="/console"
+        data-failure="alert"
+        data-failure-param-alert-text="Login failed. Please check your credentials."
+        data-failure-param-alert-classname="error">
+
+        <input name="success" type="hidden" data-ls-bind="{{env.PROTOCOL}}://{{env.DOMAIN}}/console">
+        <input name="failure" type="hidden" data-ls-bind="{{env.PROTOCOL}}://{{env.DOMAIN}}/auth/signin?failure=1">
+
+        <input name="email" type="email" class="full-width" autocomplete="email" placeholder="Email" required>
+
+        <input name="password" type="password" class="full-width" autocomplete="off" placeholder="Password" required pattern=".{6,}" title="Six or more characters">
+
+        <button>Sign In</button>
+    </form>
+    
+    <br />
+    <br />
+
+    <div class="text-line-high-large text-align-center">
+        <a href="/auth/recovery">Forgot password?</a> or don't have an account? <b><a href="/auth/signup">Sign up now</a></b>
+    </div>
+</div>

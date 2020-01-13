@@ -1,0 +1,45 @@
+<div class="zone medium signup">
+    <h1 class="zone xl margin-bottom-large margin-top">
+        Sign Up
+    </h1>
+
+    <div class="text-danger margin-bottom-large" style="display: none;" data-ls-if="{{router.params.failure}} == 1" data-debug="1">Registration Failed. Please try again later</div>
+
+    <small class="pull-end">* All fields are required</small>
+
+    <form name="register"
+        data-service="auth.register"
+        data-scope="console"
+        data-event="submit"
+        data-success="trigger,redirect"
+        data-success-param-trigger-events="auth-register"
+        data-success-param-redirect-url="/console/setup"
+        data-failure="alert"
+        data-failure-param-alert-text="Registration Failed. Please try again later"
+        data-failure-param-alert-classname="error">
+
+        <input name="confirm" type="hidden" data-ls-bind="{{env.PROTOCOL}}://{{env.DOMAIN}}/console">
+        <input name="success" type="hidden" data-ls-bind="{{env.PROTOCOL}}://{{env.DOMAIN}}/console">
+        <input name="failure" type="hidden" data-ls-bind="{{env.PROTOCOL}}://{{env.DOMAIN}}/auth/signup?failure=1">
+
+        <label>Name</label>
+        <input name="name" type="text" autocomplete="name" placeholder="" required>
+
+        <label>Email</label>
+        <input name="email" type="email" autocomplete="email" placeholder="" required data-ls-bind="{{router.params.email}}">
+
+        <label>Password</label>
+        <input name="password" type="password" autocomplete="off" placeholder="" required data-forms-password-meter pattern=".{6,}" title="Six or more characters">
+
+        <div class="agree margin-top-large margin-bottom-large">
+            <div class="pull-start margin-end-small margin-bottom">
+                <input type="checkbox" required />
+            </div>
+            By signing up, you agree to the <a href="/policy/terms" tabindex="-1" target="_blank">Terms and Conditions</a> and <a href="/policy/privacy" target="_blank" tabindex="-1">Privacy Policy</a>
+        </div>
+
+        <input name="redirect" type="hidden" data-ls-bind="{{env.PROTOCOL}}://{{env.DOMAIN}}/auth/confirm" />
+
+        <button type="submit">Sign Up</button>
+    </form>
+</div>

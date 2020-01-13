@@ -1,0 +1,227 @@
+<div
+    data-service="users.getUser"
+    data-name="user"
+    data-event="load,user-update"
+    data-param-user-id="{{router.params.id}}"
+    data-success="trigger"
+    data-success-param-trigger-events="user-load">
+
+    <div class="cover">
+        <h1 class="zone xl margin-bottom-large">
+            <a data-ls-attrs="href=/console/users?project={{router.params.project}}" class="back text-size-small"><i class="icon-left-open"></i> Users</a>
+            <br />
+
+            <span data-ls-bind="{{user.name}}">&nbsp;</span>
+        </h1>
+    </div>
+
+    <div class="zone xl">
+        <ul class="phases clear" data-ui-phases data-selected="{{router.params.tab}}">
+            <li data-state="/console/users/view?id={{router.params.id}}&project={{router.params.project}}">
+                <h2>General</h2>
+
+                <div data-ls-if="{{user.status}} === <?php echo \Auth\Auth::USER_STATUS_BLOCKED; ?>" style="display: none" class="box padding-small danger margin-bottom-xxl">
+                    This user account is blocked.
+                </div>
+
+                <div class="row responsive margin-top-xl">
+                    <div class="col span-8">
+                        <div class="box margin-bottom-large">
+                            <div class="text-align-center">
+                                <img src="" data-ls-attrs="src={{user|gravatar}}" data-size="200" alt="User Avatar" class="avatar huge margin-top-negative-xxl" />
+
+                                <div class="margin-top-small" data-ls-bind="Member since {{user.registration|date-text}}"></div>
+                                <div class="margin-top-small">
+                                    <span data-ls-if="{{user.confirm}} === true" style="display: none;">
+                                        <span class="tag green">Verified</span>
+                                    </span>
+                                    <span data-ls-if="{{user.confirm}} !== true" style="display: none;">
+                                        <span class="tag">Unverified</span>
+                                    </span>
+                                </div>
+                                <div class="margin-top-small" data-ls-bind="{{user.email}}"></div>
+                            </div>
+                        </div>
+
+                        <h3 class="margin-bottom">Preferences</h3>
+
+                        <div class="box margin-bottom"
+                            data-service="users.getUserPrefs"
+                            data-name="user-prefs"
+                            data-event="load"
+                            data-param-user-id="{{router.params.id}}"
+                            data-success="trigger"
+                            data-success-param-trigger-events="user-prefs-load">
+
+                            <div data-ls-if="!{{user-prefs|isEmptyObject}}" style="display: none;">
+                                <table class="vertical">
+                                    <thead>
+                                        <tr>
+                                            <th>Key</th>
+                                            <th>Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-ls-loop="user-prefs" data-ls-as="pref">
+                                        <tr>
+                                            <td data-title="Key: ">
+                                                <span data-ls-bind="{{$index}}"></span>
+                                            </td>
+                                            <td data-title="Value: ">
+                                                <span data-ls-bind="{{pref}}"></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div data-ls-if="{{user-prefs|isEmptyObject}}" style="display: none;">
+                                No user preferences found
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col span-4">
+                        <label>User ID</label>
+                        <div class="input-copy margin-bottom-large">
+                            <input id="uid" type="text" autocomplete="off" placeholder="" data-ls-bind="{{user.$uid}}" disabled data-forms-copy>
+                        </div>
+
+                        <div data-ls-if="{{user.status}} !== <?php echo \Auth\Auth::USER_STATUS_BLOCKED; ?>" style="display: none">
+                            <form name="users.updateStatus" class="margin-bottom"
+                                data-service="users.updateUserStatus"
+                                data-event="submit"
+                                data-param-user-id="{{router.params.id}}"
+                                data-success="alert,trigger"
+                                data-success-param-alert-text="Blocked User Successfully"
+                                data-success-param-trigger-events="user-update"
+                                data-failure="alert"
+                                data-failure-param-alert-text="Failed to Block User"
+                                data-failure-param-alert-classname="error">
+
+                                <button name="status" type="submit" class="danger fill" value="<?php echo \Auth\Auth::USER_STATUS_BLOCKED; ?>">Block Account</button>
+                            </form>
+                        </div>
+
+                        <div data-ls-if="{{user.status}} === <?php echo \Auth\Auth::USER_STATUS_BLOCKED; ?>" style="display: none">
+                            <form name="users.updateStatus" class="margin-bottom"
+                                data-service="users.updateUserStatus"
+                                data-event="submit"
+                                data-param-user-id="{{router.params.id}}"
+                                data-success="alert,trigger"
+                                data-success-param-alert-text="Blocked Activated Successfully"
+                                data-success-param-trigger-events="user-update"
+                                data-failure="alert"
+                                data-failure-param-alert-text="Failed to Activate User"
+                                data-failure-param-alert-classname="error">
+
+                                <button name="status" type="submit" class="fill" value="<?php echo \Auth\Auth::USER_STATUS_ACTIVATED; ?>">Activate Account</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li data-state="/console/users/view/devices?id={{router.params.id}}&project={{router.params.project}}">
+                <h2>Devices</h2>
+
+                <div
+                    data-service="users.getUserSessions"
+                    data-name="sessions"
+                    data-param-user-id="{{router.params.id}}"
+                    data-event="load,user-update">
+
+                    <div data-ls-if="{{sessions.length}} === 0" style="display: none" class="margin-top-xl margin-bottom-xl">
+                        No sessions available
+                    </div>
+
+                    <div data-ls-if="{{sessions.length}} !== 0" style="display: none">
+                        <div class="box margin-bottom">
+                            <ul data-ls-loop="sessions" data-ls-as="session" class="list">
+                                <li class="clear">
+                                    <form class="pull-end"
+                                        data-service="users.deleteUsersSession"
+                                        data-event="submit"
+                                        data-loading="Loading..."
+                                        data-success="trigger"
+                                        data-success-param-trigger-events="user-update"
+                                        data-failure="alert"
+                                        data-failure-param-alert-text="Failed to logout session"
+                                        data-failure-param-alert-classname="error">
+
+                                        <input type="hidden" name="userId" data-ls-bind="{{router.params.id}}">
+                                        <input type="hidden" name="sessionId" data-ls-bind="{{session.id}}">
+                                        <button class="danger">Logout</button>
+                                    </form>
+
+                                    <img data-ls-attrs="src={{env.API}}/avatars/browsers/{{session.client.short_name|lowercase}}?width=120&height=120&project={{env.PROJECT}},title={{session.client.name}},alt={{session.client.name}}" class="avatar trans pull-start margin-end" />
+
+                                    <span data-ls-bind="{{session.client.name}}"></span> <span data-ls-bind="{{session.client.version}}"></span> on <span data-ls-bind="{{session.model}}"></span> <span data-ls-bind="{{session.OS.name}}"></span> <span data-ls-bind="{{session.OS.version}}"></span>
+
+                                    <div class="margin-top-small">
+                                        <img data-ls-attrs="src={{env.API}}/avatars/flags/{{session.geo.isoCode}}?width=80&height=80&project={{env.PROJECT}}" class="avatar xs margin-end-small inline" />
+                                        <small data-ls-bind="{{session.ip}}"></small> / <small data-ls-bind="{{session.geo.country}}"></small>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <form class="inline margin-bottom-large"
+                            data-service="users.deleteUsersSessions"
+                            data-param-user-id="{{router.params.id}}"
+                            data-event="submit"
+                            data-success="trigger"
+                            data-success-param-trigger-events="user-update"
+                            data-failure="alert"
+                            data-failure-param-alert-text="Failed to logout all sessions"
+                            data-failure-param-alert-classname="error">
+                            
+                            <button class="danger">Logout from all devices</button>
+                        </form>
+                    </div>
+                </div>
+
+            </li>
+            <li data-state="/console/users/view/audit?id={{router.params.id}}&project={{router.params.project}}">
+                <h2>Audit Log</h2>
+
+                <div
+                    data-service="users.getUserLogs"
+                    data-name="logs"
+                    data-param-user-id="{{router.params.id}}"
+                    data-event="load,logs-load">
+
+                    <div data-ls-if="{{logs.length}} === 0" style="display: none" class="margin-top-xl margin-bottom-xl">
+                        No logs available
+                    </div>
+
+                    <div class="box" data-ls-if="{{logs.length}} !== 0" style="display: none">
+                        <table class="vertical small">
+                            <thead>
+                                <tr>
+                                    <th width="140">Date</th>
+                                    <th width="175">Event</th>
+                                    <th>Client</th>
+                                    <th width="90">Location</th>
+                                    <th width="90">IP</th>
+                                </tr>
+                            </thead>
+                            <tbody data-ls-loop="logs" data-ls-as="log">
+                                <tr>
+                                    <td data-title="Date: "><span data-ls-bind="{{log.time|date-time}}"></span></td>
+                                    <td data-title="Event: "><span data-ls-bind="{{log.event}}"></span></td>
+                                    <td data-title="Client: ">
+                                        <img data-ls-attrs="src={{env.API}}/avatars/browsers/{{log.client.short_name|lowercase}}?width=80&height=80&project={{env.PROJECT}},title={{log.client.name}},alt={{log.client.name}}" class="avatar xs inline margin-end-small" />
+                                        <span data-ls-bind="{{log.client.name}} {{log.client.version}} on {{log.model}} {{log.OS.name}} {{log.OS.version}}"></span>
+                                    </td>
+                                    <td data-title="Location: ">
+                                        <img data-ls-attrs="src={{env.API}}/avatars/flags/{{log.geo.isoCode}}?width=80&height=80&project={{env.PROJECT}}" class="avatar xs inline margin-end-small" />
+                                        <span data-ls-bind="{{log.geo.country}}"></span>
+                                    </td>
+                                    <td data-title="IP: "><span data-ls-bind="{{log.ip}}"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+version: '3'
+
+services:
+  appwrite:
+    container_name: appwrite
+    build:
+      context: .
+      args:
+        - TESTING=true
+        - VERSION=dev
+    restart: unless-stopped
+    networks:
+    - appwrite
+    volumes:
+    - appwrite-uploads:/storage/uploads:rw
+    - appwrite-cache:/storage/cache:rw
+    - ./phpunit.xml:/usr/share/nginx/html/phpunit.xml
+    - ./tests:/usr/share/nginx/html/tests
+    - ./app:/usr/share/nginx/html/app
+    - ./docs:/usr/share/nginx/html/docs
+    - ./public:/usr/share/nginx/html/public
+    - ./src:/usr/share/nginx/html/src
+    - ./docker/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+    - "80:80"
+    - "443:443"
+    depends_on:
+    - mariadb
+    - redis
+    - smtp
+    - clamav
+    - influxdb
+    - telegraf
+    environment:
+    - _APP_ENV=development
+    - _APP_OPTIONS_ABUSE=disabled
+    - _APP_OPENSSL_KEY_V1=your-secret-key
+    - _APP_REDIS_HOST=redis
+    - _APP_REDIS_PORT=6379
+    - _APP_DB_HOST=mariadb
+    - _APP_DB_PORT=3306
+    - _APP_DB_SCHEMA=appwrite
+    - _APP_DB_USER=user
+    - _APP_DB_PASS=password
+    - _APP_INFLUXDB_HOST=influxdb
+    - _APP_INFLUXDB_PORT=8086
+    - _APP_STATSD_HOST=telegraf
+    - _APP_STATSD_PORT=8125
+
+  mariadb:
+    image: appwrite/mariadb:1.0.2 # fix issues when upgrading using: mysql_upgrade -u root -p
+    restart: unless-stopped
+    networks:
+    - appwrite
+    volumes:
+    - appwrite-db:/var/lib/mysql:rw
+    ports:
+    - "3306:3306"
+    environment:
+    - MYSQL_ROOT_PASSWORD=rootsecretpassword
+    - MYSQL_DATABASE=appwrite
+    - MYSQL_USER=user
+    - MYSQL_PASSWORD=password
+    command: 'mysqld --innodb-flush-method=fsync'
+
+  smtp:
+    image: appwrite/smtp:1.0.0
+    restart: unless-stopped
+    networks:
+    - appwrite
+    environment:
+    - MAILNAME=appwrite
+    - RELAY_NETWORKS=:192.168.0.0/24:10.0.0.0/16
+
+  clamav:
+    image: appwrite/clamav:1.0.7
+    restart: unless-stopped
+    networks:
+    - appwrite
+    volumes:
+    - appwrite-uploads:/storage/uploads
+
+  redis:
+    image: redis:5.0
+    restart: unless-stopped
+    networks:
+    - appwrite
+
+  influxdb:
+    image: influxdb:1.6
+    restart: unless-stopped
+    networks:
+    - appwrite
+    volumes:
+    - appwrite-influxdb:/var/lib/influxdb:rw
+
+  telegraf:
+    image: appwrite/telegraf:1.0.0
+    restart: unless-stopped
+    networks:
+    - appwrite
+
+  # resque:
+  #   image: registry.gitlab.com/appwrite/appwrite/resque-web:v1.0.2
+  #   restart: unless-stopped
+  #   networks:
+  #   - appwrite
+  #   ports:
+  #   - "5678:5678"
+  #   environment:
+  #   - RESQUE_WEB_HOST=redis
+  #   - RESQUE_WEB_PORT=6379
+  #   - RESQUE_WEB_HTTP_BASIC_AUTH_USER=user
+  #   - RESQUE_WEB_HTTP_BASIC_AUTH_PASSWORD=password
+
+networks:
+  appwrite:
+
+volumes:
+  appwrite-db:
+  appwrite-cache:
+  appwrite-uploads:
+  appwrite-influxdb:

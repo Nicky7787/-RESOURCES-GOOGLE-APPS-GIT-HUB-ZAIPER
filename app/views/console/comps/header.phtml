@@ -1,0 +1,139 @@
+<header class="clear">
+    &nbsp;&nbsp;&nbsp;
+    <div class="list pull-start project-only">
+        <label>
+            <select data-switch data-ls-bind="{{router.params.project}}" data-unsync="1" data-ls-loop="projects" data-ls-as="option">
+                <option data-ls-attrs="value={{option.$uid}}" data-ls-bind="{{option.name}}"></option>
+            </select>
+        </label>
+    </div>
+
+    <button style="overflow: visible;" class="project-only setup-new tooltip round down" aria-label="Quick Start" data-tooltip="Create a new project"><i class="icon-plus"></i></button>
+
+    <div class="account-box clear pull-end"
+        data-service="account.get"
+        data-name="account"
+        data-scope="console"
+        data-event="load"
+        data-failure="trigger"
+        data-failure-param-trigger-events="logout">
+
+        <div class="pull-end console-back">
+            <a href="/console">Back to Console &nbsp;<i class="icon-right-open"></i></a>
+        </div>
+
+        <a href="/console/account" class="account pull-end clear">
+            <img src="" data-ls-attrs="src={{account|gravatar}}" alt="User Avatar" class="avatar margin-start pull-end" />
+            <span class="name pull-end" data-ls-bind="{{account.name}}"></span>
+        </a>
+    </div>
+
+    <nav>
+        <a class="logo" href="/console">
+            <img src="/images/appwrite-nav.svg" alt="Appwrite Logo" />
+        </a>
+
+        <div data-ui-highlight class="project-only container">
+
+            <ul class="links">
+                <li>
+                    <a data-ls-attrs="href=/console/home?project={{router.params.project}}">
+                        <i class="icon-home"></i>
+                        Home
+                    </a>
+                </li>
+            </ul>
+
+            <b class="subtitle">DEVELOP</b>
+
+            <ul class="links">
+                <li>
+                    <a data-ls-attrs="href=/console/database?project={{router.params.project}}">
+                        <i class="icon-database"></i>
+                        Database
+                    </a>
+                </li>
+                <li>
+                    <a data-ls-attrs="href=/console/storage?project={{router.params.project}}">
+                        <i class="icon-folder"></i>
+                        Storage
+                    </a>
+                </li>
+                <li>
+                    <a data-ls-attrs="href=/console/users?project={{router.params.project}}">
+                        <i class="icon-users"></i>
+                        Users
+                    </a>
+                </li>
+            </ul>
+
+            <b class="subtitle">MANAGE</b>
+
+            <ul class="links">
+                <li>
+                    <a data-ls-attrs="href=/console/keys?project={{router.params.project}}">
+                        <i class="icon-key-inv"></i>
+                        API Keys
+                    </a>
+                </li>
+                <li>
+                    <a data-ls-attrs="href=/console/webhooks?project={{router.params.project}}">
+                        <i class="icon-link"></i>
+                        Webhooks
+                    </a>
+                </li>
+                <li>
+                    <a data-ls-attrs="href=/console/tasks?project={{router.params.project}}">
+                        <i class="icon-clock"></i>
+                        Tasks
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <ul class="links bottom project-only">
+            <li>
+                <a data-ls-attrs="href=/console/settings?project={{router.params.project}}"><i class="icon-cog"></i> Settings</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<div class="list pull-start project-only"
+    data-service="projects.listProjects"
+    data-event="load,project-update"
+    data-name="projects"
+    data-scope="console"></div>
+
+<div class=""
+    data-service="locale.getLocale"
+    data-name="locale"
+    data-event="load"
+    data-scope="console"></div>
+
+<div class=""
+    data-service="locale.getCountries"
+    data-name="locale-countries"
+    data-event="load"
+    data-scope="console"></div>
+
+<div class=""
+    data-service="locale.getCountriesPhones"
+    data-name="locale-countries-phones"
+    data-event="load"
+    data-scope="console"></div>
+
+<div data-ui-modal class="modal box close" data-button-alias=".setup-new" data-button-icon="icon-plus" data-button-class="project-only" data-open-event="create-project">
+    <h1>Create Project</h1>
+
+    <form data-setup>
+        <p>Appwrite project is set of services and resources shared across different platforms like Web, iOS or Android.</p>
+
+        <label>Name</label>
+        <input type="text" class="full-width" name="name" required autocomplete="off" />
+
+        <hr />
+
+        <button type="submit">Create</button> &nbsp; <button data-ui-modal-close="" type="button" class="reverse">Cancel</button>
+    </form>
+</div>

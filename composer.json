@@ -1,0 +1,80 @@
+{
+    "name": "appwrite/server-ce",
+    "description": "End to end backend server for frontend and mobile apps.",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Eldad Fux",
+            "email": "eldad@appwrite.io"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Audit\\": "src/Audit",
+            "Auth\\": "src/Auth",
+            "Database\\": "src/Database",
+            "Event\\": "src/Event",
+            "OpenSSL\\": "src/OpenSSL",
+            "Resize\\": "src/Resize",
+            "Storage\\": "src/Storage",
+            "Task\\": "src/Task",
+            "Template\\": "src/Template"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {"Tests\\E2E\\": "tests/e2e"}
+    },
+    "require": {
+        "php": ">=7.3.0",
+        "ext-curl": "*",
+        "ext-imagick": "*",
+        "ext-mbstring": "*",
+        "ext-json": "*",
+        "ext-dom": "*",
+        "ext-redis": "*",
+        "ext-pdo": "*",
+        "ext-openssl": "*",
+        "ext-zlib": "*",
+        "ext-sockets": "*",
+
+        "appwrite/php-clamav": "master",
+
+        "utopia-php/framework": "master",
+        "utopia-php/abuse": "master",
+        "utopia-php/audit": "master",
+        "utopia-php/cache": "master",
+        "utopia-php/cli": "master",
+        "utopia-php/locale": "master",
+        "utopia-php/registry": "master",
+
+        "chrisboulton/php-resque": "*",
+        "chrisboulton/php-resque-scheduler": "*",
+        "geoip2/geoip2": "2.9.0",
+        "piwik/device-detector": "3.5.1",
+        "dragonmantank/cron-expression": "2.2.0",
+        "domnikl/statsd": "2.0.*",
+        "influxdb/influxdb-php": "1.15.*",
+        "bacon/bacon-qr-code": "2.0.0",
+        "phpmailer/phpmailer": "6.0.7"
+    },
+    "require-dev": {
+        "appwrite/sdk-generator": "master",
+        "phpunit/phpunit": "^7.0"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/appwrite/sdk-generator"
+        }
+    ],
+    "provide": {
+        "ext-phpiredis": "*"
+    },
+    "minimum-stability": "dev",
+    "config": {
+        "platform": {
+            "php": "7.3"
+        }
+    }
+}
